@@ -48,3 +48,19 @@ npm run worker
 npm run test
 ```
 
+## Deploy To Vercel
+
+This app is ready for Vercel deployment.
+
+1. Import `mkabra-07/repository-atlas` into Vercel.
+2. Keep the framework preset as `Next.js`.
+3. Add environment variables as needed:
+   - `NEXT_PUBLIC_APP_URL`
+   - `GITHUB_TOKEN`
+   - `OPENAI_API_KEY`
+   - `OPENAI_MODEL`
+   - `DATABASE_URL` if you want Postgres instead of the local JSON fallback
+   - `REDIS_URL` if you want BullMQ workers instead of the in-process fallback
+4. Set `NEXT_PUBLIC_APP_URL` to your production Vercel URL after the first deploy.
+
+The repo also includes a GitHub Actions workflow at `.github/workflows/ci.yml` that runs tests and a production build on pushes to `main` and on pull requests.
