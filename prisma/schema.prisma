@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Repository {
+  id            String             @id @default(cuid())
+  owner         String
+  name          String
+  fullName      String             @unique
+  githubUrl     String
+  defaultBranch String?
+  description   String?
+  stars         Int                @default(0)
+  primaryLanguage String?
+  lastPushedAt  DateTime?
+  visibility    String             @default("public")
+  createdAt     DateTime           @default(now())
+  updatedAt     DateTime           @updatedAt
+  jobs          AnalysisJob[]
+  snapshots     AnalysisSnapshot[]
+
+  @@unique([owner, name])
+}
+
+model AnalysisJob {
+  id          String   @id @default(cuid())
+  repoId      String
+  status      String
+  progress    Int      @default(0)
+  stage       String
+  error       String?
+  forceRefresh Boolean @default(false)
+  createdAt   DateTime @default(now())
+  startedAt   DateTime?
+  completedAt DateTime?
+  updatedAt   DateTime @updatedAt
+  repository  Repository @relation(fields: [repoId], references: [id], onDelete: Cascade)
+}
+
+model AnalysisSnapshot {
+  id             String   @id @default(cuid())
+  repoId         String   @unique
+  branch         String
+  commitSha      String
+  treeJson       Json
+  graphJson      Json
+  insightsJson   Json
+  summariesJson  Json
+  generatedAt    DateTime @default(now())
+  staleAfter     DateTime
+  repository     Repository @relation(fields: [repoId], references: [id], onDelete: Cascade)
+}
